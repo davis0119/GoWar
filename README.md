@@ -16,7 +16,7 @@ The player will play against a Bot with different difficulty settings, different
 Other rules may be added if further complexity is desired. 
 
 # Example Code
-
+```
 game := war.NewGame() 
 game.InitPlayer(user) 
 game.InitBot(difficulty) 
@@ -35,6 +35,6 @@ for !game.Over() {
     game.PrintBattleResults() 
 }
 game.AnnounceWinner() 
-
+```
 # License 
 MIT License
