@@ -1,5 +1,9 @@
 package deck
 
+import (
+	"math/rand"
+)
+
 type Suit struct {
 	Name string
 }
@@ -31,10 +35,35 @@ func (c1 *Card) BattleAgainst(c2 *Card) int {
 	}
 }
 
+func Shuffle(d Deck) Deck {
+	for i := 1; i < len(d.PlayingCards); i++ {
+		randomNum := rand.Intn(i + 1)
+		if i != randomNum { // swap the cards
+			d.PlayingCards[randomNum], d.PlayingCards[i] = d.PlayingCards[i], d.PlayingCards[randomNum]
+		}
+	}
+	return d
+}
+
 func Draw(d *Deck) (Card, Deck) {
 	card := d.PlayingCards[0]
 	d.PlayingCards = d.PlayingCards[1:]
 	return card, *d
+}
+
+func CommenceRound(d1 *Deck, d2 *Deck) (Card, Deck) {
+	c1, d1 = Draw(d1)
+	c2, d2 = Draw(d2)
+	result := c1.BattleAgainst(c2)
+	if result == -1 {
+		d2.PlayingCards = append(d2.PlayingCards, c1)
+		d2.PlayingCards = append(d2.PlayingCards, c2)
+	} else if result == 0 { // war commencess
+
+	} else {
+		d1.PlayingCards = append(d1.PlayingCards, c2)
+		d1.PlayingCards = append(d1.PlayingCards, c1)
+	}
 }
 
 func (d *Deck) DeckInit() {
