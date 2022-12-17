@@ -25,7 +25,7 @@ func (c *Card) String() string {
 	return ""
 }
 
-func (c1 *Card) BattleAgainst(c2 *Card) int {
+func (c1 *Card) BattleAgainst(c2 Card) int {
 	if c1.Value.Val < c2.Value.Val {
 		return -1 // loses
 	} else if c1.Value.Val == c2.Value.Val {
@@ -45,15 +45,15 @@ func Shuffle(d Deck) Deck {
 	return d
 }
 
-func Draw(d *Deck) (Card, Deck) {
+func Draw(d *Deck) (Card, *Deck) {
 	card := d.PlayingCards[0]
 	d.PlayingCards = d.PlayingCards[1:]
-	return card, *d
+	return card, d
 }
 
-func CommenceRound(d1 *Deck, d2 *Deck) (Card, Deck) {
-	c1, d1 = Draw(d1)
-	c2, d2 = Draw(d2)
+func CommenceRound(d1 *Deck, d2 *Deck) {
+	c1, d1 := Draw(d1)
+	c2, d2 := Draw(d2)
 	result := c1.BattleAgainst(c2)
 	if result == -1 {
 		d2.PlayingCards = append(d2.PlayingCards, c1)
@@ -66,7 +66,8 @@ func CommenceRound(d1 *Deck, d2 *Deck) (Card, Deck) {
 	}
 }
 
-func (d *Deck) DeckInit() {
+func DeckInit() *Deck {
+	d := new(Deck)
 	suits := []Suit{
 		{"Spades"},
 		{"Clubs"},
@@ -94,4 +95,5 @@ func (d *Deck) DeckInit() {
 			d.PlayingCards = append(d.PlayingCards, Card{Suit: s, Value: v})
 		}
 	}
+	return d
 }
