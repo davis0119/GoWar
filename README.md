@@ -21,6 +21,6 @@ Players are given 3 opportunities to deploy more troops -- in the event of a War
 # License 
 MIT License
 
-# Ackowledgements
+# Acknowledgements
 
 Hanbang Wang for incredibly helpful resources! Everything detailed was also very appreciated for navigation through this project. 
