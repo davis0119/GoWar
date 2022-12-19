@@ -23,21 +23,22 @@ func promptPlayer(prompt string) bool {
 			if input[0] == 'n' {
 				return false
 			}
+			if input == "help" {
+				fmt.Println("War is a card game which involves 2 players. Each player receives half of a shuffled deck of cards.")
+				fmt.Println("Each round, you will be prompted to commence a battle. In a battle, each player draws a card. The player with a higher card rank (ignoring suit) wins the battle and adds all cards played to their deck.")
+				fmt.Println("A winner is determined when one side no longer has any more cards left to play.")
+			}
 		}
-		fmt.Println("Answer via 'y' or 'n'")
+		if input != "help" {
+			fmt.Println("Answer via 'y' or 'n'")
+		}
 	}
-}
-
-// Input: deck pointer, deck pointer
-// Checks if either of the decks have 0 cards and returns true if either one does.
-func gameOver(player *deck.Deck, bot *deck.Deck) bool {
-	return len(player.PlayingCards) == 0 || len(bot.PlayingCards) == 0
 }
 
 // Input: deck pointer, deck pointer
 // Prints out the current status of the game (how many cards each player has).
 func announceStatusQuo(player *deck.Deck, bot *deck.Deck) {
-	fmt.Println("You:", len(player.PlayingCards), "cards |", "Opponent:", len(bot.PlayingCards), "cards")
+	fmt.Println("You:", len(player.PlayingCards), "cards |", "Opponent:", len(bot.PlayingCards), "cards |", len(player.PlayingCards)+len(bot.PlayingCards), "are in play.")
 }
 
 // Input: deck pointer, deck pointer
@@ -62,7 +63,7 @@ func main() {
 		// Hand out the cards.
 		player, bot := deck.SplitCards(d)
 		// Game Loop.
-		for !gameOver(player, bot) {
+		for !deck.GameOver(player, bot) {
 			declareBattle := promptPlayer("Wage battle? (y/n) ")
 			if declareBattle {
 				deck.CommenceRound(player, bot)
