@@ -21,6 +21,7 @@ type Card struct {
 }
 
 type Deck struct {
+	Counters     int
 	PlayingCards []Card
 }
 
@@ -56,6 +57,7 @@ func SplitCards(d *Deck) (player *Deck, bot *Deck) {
 		player.PlayingCards = append(player.PlayingCards, c1)
 		bot.PlayingCards = append(bot.PlayingCards, c2)
 	}
+	player.Counters = 3
 	return player, bot
 }
 
@@ -134,12 +136,23 @@ func (c1 *Card) BattleAgainst(c2 Card) int {
 }
 
 // Awaits the player prompt to advance in the war.
-func promptPlayer(prompt string) int {
+func promptPlayer(prompt string, player *Deck) int {
 	var input string
 	for {
 		fmt.Print(prompt)
 		fmt.Scanln(&input)
 		if len(input) > 0 {
+			if input[0] == 'w' {
+				if player.Counters > 0 {
+					player.Counters--
+					FocusTerminal()
+					fmt.Println("You can deploy extra troops only", player.Counters, "more times!")
+					return 2
+				} else {
+					FocusTerminal()
+					fmt.Println("You do not have enough War counters for this action!")
+				}
+			}
 			if input[0] == 'y' {
 				return 1
 			}
@@ -158,7 +171,7 @@ func promptPlayer(prompt string) int {
 			}
 		}
 		if input != "help" {
-			fmt.Println("Answer via 'y' or 'n'. If you would like more info, type 'help'")
+			fmt.Println("If you would like more info, type 'help'")
 		}
 	}
 }
@@ -183,7 +196,7 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 	// The battle determining card.
 	readyToAdvance := 0
 	for readyToAdvance == 0 {
-		readyToAdvance = promptPlayer("A War Event is in progress. Are you ready to view the results? (y/n | f to forfeit this War Event) ")
+		readyToAdvance = promptPlayer("A War Event is in progress. ('y' to View Outcome | 'f' to forfeit War Event | 'w' to Deploy More Troops) ", player)
 	}
 	if GameOver(player, bot) {
 		return
@@ -193,6 +206,10 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 		bot.PlayingCards = append(bot.PlayingCards, playerPile...)
 		bot.PlayingCards = append(bot.PlayingCards, botPile...)
 		fmt.Println("Your troops have now joined your opponent's side.")
+		return
+	} else if readyToAdvance == 2 { // Player has waged a double war.
+		warWaiting("You have deployed more troops for a bigger war! Higher stakes")
+		war(player, bot, playerPile, botPile)
 		return
 	}
 	warWaiting("War in progress")
