@@ -53,7 +53,7 @@ func announceWinner(player *deck.Deck, bot *deck.Deck) {
 }
 
 func main() {
-	gameInSession := promptPlayer("Do you wish to enter War? ")
+	gameInSession := promptPlayer("Do you wish to enter the War? (y/n | 'help' for more info) ")
 	for gameInSession {
 		deck.FocusTerminal()
 		// Prepare the deck of cards.

@@ -13,26 +13,12 @@ The player will play against a Bot with different difficulty settings, different
 
 Other rules may be added if further complexity is desired. 
 
-# Example Code
-```
-game := war.NewGame() 
-game.InitPlayer(user) 
-game.InitBot(difficulty) 
-game.SplitCards() 
+# How to Play
 
-for !game.Over() {
-    game.CommenceRound() // if card ranks are the same 
-    /* within CommenceRound(), we check for ties and grant the option to forfeit
-        for both players like below 
-        '''
-        if isWar {
-            playerForfeit := grantForfeitOption() 
-        }
-        '''
-    */
-    game.PrintBattleResults() 
-}
-game.AnnounceWinner() 
-```
+1. go run war.go 
+   - Prompt 'y' to enter the game. 'help' will always be a keyword to provide more information. 
+   - Each round, you will be asked to 'Wage battle'. This represents a round in War (both players draw a card).
+   - In the event where both players draw the same card, you will be given an option to continue with the War Event or to forfeit the war. Forfeiting may be handy if you remember you have very valuable cards near the top of your deck and do not wish to risk them. 
+
 # License 
 MIT License

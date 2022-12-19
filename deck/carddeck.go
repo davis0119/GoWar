@@ -168,7 +168,7 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 	// The battle determining card.
 	readyToAdvance := 0
 	for readyToAdvance == 0 {
-		readyToAdvance = promptPlayer("A War is in progress. Are you ready to view the results? (y/n | f to forfeit this War Event) ")
+		readyToAdvance = promptPlayer("A War Event is in progress. Are you ready to view the results? (y/n | f to forfeit this War Event) ")
 	}
 	if GameOver(player, bot) {
 		return
