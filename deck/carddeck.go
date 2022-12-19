@@ -1,7 +1,9 @@
 package deck
 
 import (
+	"fmt"
 	"math/rand"
+	"time"
 )
 
 type Suit struct {
@@ -26,22 +28,21 @@ func (c *Card) ToStr() string {
 	return c.Value.Name + " of " + c.Suit.Name
 }
 
-func (c1 *Card) BattleAgainst(c2 Card) int {
-	if c1.Value.Val < c2.Value.Val {
-		return -1 // loses
-	} else if c1.Value.Val == c2.Value.Val {
-		return 0 // tie (WAR)
-	} else {
-		return 1 // win
-	}
-}
+// func Shuffle(d *Deck) *Deck {
+// 	for i := 1; i < len(d.PlayingCards); i++ {
+// 		randomNum := rand.Intn(i + 1)
+// 		if i != randomNum {
+// 			d.PlayingCards[randomNum], d.PlayingCards[i] = d.PlayingCards[i], d.PlayingCards[randomNum]
+// 		}
+// 	}
+// 	return d
+// }
 
 func Shuffle(d *Deck) *Deck {
-	for i := 1; i < len(d.PlayingCards); i++ {
-		randomNum := rand.Intn(i + 1)
-		if i != randomNum { // swap the cards
-			d.PlayingCards[randomNum], d.PlayingCards[i] = d.PlayingCards[i], d.PlayingCards[randomNum]
-		}
+	rand.Seed(time.Now().UnixNano()) // not doing this doesn't really "shuffle" the deck every time
+	for i := len(d.PlayingCards) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		d.PlayingCards[i], d.PlayingCards[j] = d.PlayingCards[j], d.PlayingCards[i] // swap the cards
 	}
 	return d
 }
@@ -52,23 +53,7 @@ func Draw(d *Deck) (Card, *Deck) {
 	return card, d
 }
 
-func CommenceRound(d1 *Deck, d2 *Deck) {
-	c1, d1 := Draw(d1)
-	c2, d2 := Draw(d2)
-	result := c1.BattleAgainst(c2)
-	if result == -1 {
-		d2.PlayingCards = append(d2.PlayingCards, c1)
-		d2.PlayingCards = append(d2.PlayingCards, c2)
-	} else if result == 0 { // war commences
-
-	} else {
-		d1.PlayingCards = append(d1.PlayingCards, c2)
-		d1.PlayingCards = append(d1.PlayingCards, c1)
-	}
-}
-
 func SplitCards(d *Deck) (d1 *Deck, d2 *Deck) {
-	Shuffle(d)
 	d1 = new(Deck)
 	d2 = new(Deck)
 	for len(d.PlayingCards) > 0 {
@@ -118,4 +103,35 @@ func DeckInit() *Deck {
 		}
 	}
 	return d
+}
+
+func (c1 *Card) BattleAgainst(c2 Card) int {
+	fmt.Println("You: " + c1.ToStr() + " | Opponent: " + c2.ToStr())
+	if c1.Value.Val < c2.Value.Val {
+		return -1 // loses
+	} else if c1.Value.Val == c2.Value.Val {
+		return 0 // tie (WAR)
+	} else {
+		return 1 // win
+	}
+}
+
+func CommenceRound(d1 *Deck, d2 *Deck) {
+	for i := 0; i < 7; i++ {
+		println()
+	}
+	c1, d1 := Draw(d1)
+	c2, d2 := Draw(d2)
+	result := c1.BattleAgainst(c2)
+	if result == -1 {
+		d2.PlayingCards = append(d2.PlayingCards, c1)
+		d2.PlayingCards = append(d2.PlayingCards, c2)
+		fmt.Println("You lost this battle...")
+	} else if result == 0 { // war commences
+		fmt.Println("War has commenced!")
+	} else {
+		d1.PlayingCards = append(d1.PlayingCards, c2)
+		d1.PlayingCards = append(d1.PlayingCards, c1)
+		fmt.Println("You won this battle!")
+	}
 }
