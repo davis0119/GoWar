@@ -107,6 +107,20 @@ func DeckInit() *Deck {
 	return d
 }
 
+func BotDialogue(player *Deck, bot *Deck) {
+	dialogue := map[int]string{
+		1: "I'm waiting... hurry up.",
+		2: "What's wrong? You scared?",
+		3: "Hahaha, you're pathetic. I will emerge victorious!",
+		4: "Doesn't matter that you're winning. I'll come back.",
+	}
+	if len(player.PlayingCards) > len(bot.PlayingCards) {
+		fmt.Println(dialogue[4])
+	} else if len(player.PlayingCards) < len(bot.PlayingCards) {
+		fmt.Println(dialogue[rand.Intn(4)])
+	}
+}
+
 // Similar to a compareTo method. Sees which card would be victorious in battle.
 func (c1 *Card) BattleAgainst(c2 Card) int {
 	fmt.Println("You: " + c1.ToStr() + " | Opponent: " + c2.ToStr())
@@ -165,6 +179,7 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 		playerPile = append(playerPile, c1)
 		botPile = append(botPile, c2)
 	}
+	BotDialogue(player, bot)
 	// The battle determining card.
 	readyToAdvance := 0
 	for readyToAdvance == 0 {
