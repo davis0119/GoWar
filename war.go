@@ -11,11 +11,13 @@ func promptPlayer(prompt string) bool {
 	for {
 		fmt.Print(prompt)
 		fmt.Scanln(&input)
-		if input[0] == 'y' {
-			return true
-		}
-		if input[0] == 'n' {
-			return false
+		if len(input) > 0 {
+			if input[0] == 'y' {
+				return true
+			}
+			if input[0] == 'n' {
+				return false
+			}
 		}
 		fmt.Println("Answer via 'y' or 'n'")
 	}
@@ -40,9 +42,15 @@ func AnnounceWinner(player *deck.Deck, bot *deck.Deck) {
 func main() {
 	gameInSession := promptPlayer("Do you wish to enter War? ")
 	for gameInSession {
+		for i := 0; i < 10; i++ {
+			println() // do this to reduce clutter on the screen
+		}
+		// Prepare the deck of cards.
 		d := deck.DeckInit()
 		d = deck.Shuffle(d)
+		// Hand out the cards.
 		player, bot := deck.SplitCards(d)
+		// Game Loop.
 		for !gameOver(player, bot) {
 			declareBattle := promptPlayer("Wage battle? (y/n) ")
 			if declareBattle {
@@ -55,25 +63,7 @@ func main() {
 		fmt.Println("The game is over.")
 		AnnounceStatusQuo(player, bot)
 		AnnounceWinner(player, bot)
+		// Restart game option.
 		gameInSession = promptPlayer("Do you wish to re-wage War? ")
 	}
-	/*
-		game := war.NewGame()
-		game.InitPlayer(user)
-		game.InitBot(difficulty)
-		game.SplitCards()
-
-		for !game.Over() {
-			game.CommenceRound() // if card ranks are the same
-			 within CommenceRound(), we check for ties and grant the option to forfeit
-				for both players like below
-				'''
-				if isWar {
-					playerForfeit := grantForfeitOption()
-				}
-				'''
-			game.PrintBattleResults()
-		}
-		game.AnnounceWinner()
-	*/
 }

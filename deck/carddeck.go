@@ -28,16 +28,6 @@ func (c *Card) ToStr() string {
 	return c.Value.Name + " of " + c.Suit.Name
 }
 
-// func Shuffle(d *Deck) *Deck {
-// 	for i := 1; i < len(d.PlayingCards); i++ {
-// 		randomNum := rand.Intn(i + 1)
-// 		if i != randomNum {
-// 			d.PlayingCards[randomNum], d.PlayingCards[i] = d.PlayingCards[i], d.PlayingCards[randomNum]
-// 		}
-// 	}
-// 	return d
-// }
-
 func Shuffle(d *Deck) *Deck {
 	rand.Seed(time.Now().UnixNano()) // not doing this doesn't really "shuffle" the deck every time
 	for i := len(d.PlayingCards) - 1; i > 0; i-- {
@@ -96,7 +86,6 @@ func DeckInit() *Deck {
 		{"King", 13},
 		{"Ace", 14},
 	}
-	// d.PlayingCards = nil TODO: check if this is needed
 	for _, v := range values {
 		for _, s := range suits {
 			d.PlayingCards = append(d.PlayingCards, Card{Suit: s, Value: v})
@@ -117,8 +106,8 @@ func (c1 *Card) BattleAgainst(c2 Card) int {
 }
 
 func CommenceRound(d1 *Deck, d2 *Deck) {
-	for i := 0; i < 7; i++ {
-		println()
+	for i := 0; i < 10; i++ {
+		println() // do this to reduce clutter on the screen
 	}
 	c1, d1 := Draw(d1)
 	c2, d2 := Draw(d2)
