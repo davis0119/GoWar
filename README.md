@@ -9,11 +9,7 @@ Additional rules are added for increased game complexity. Some may be substitute
 
 Players are allowed to forfeit wars (this may be exercised if a player is running low on cards and would rather play more safe. When number of cards are low, the player usually has a sense of where their "good" cards are in their deck and would avoid risking losing such cards.)
 
-Players are given 3 opportunities to "re-strike" -- in the event of a War event, a player may exercise one "opportunity" to select one of the 3 face down cards in a War to attempt to beat the other player's currently played card. 
-
-The player will play against a Bot with different difficulty settings, different behaviors (some randomness / informed decisions), and automated dialogue.
-
-Other rules may be added if further complexity is desired. 
+Players are given 3 opportunities to "re-strike" -- in the event of a War event, a player may exercise one "opportunity" to select one of the 3 face down cards in a War to attempt to beat the other player's currently played card.
 
 # How to Play
 
@@ -21,6 +17,7 @@ Other rules may be added if further complexity is desired.
    - Prompt 'y' to enter the game. 'help' will always be a keyword to provide more information. 
    - Each round, you will be asked to 'Wage battle'. This represents a round in War (both players draw a card).
    - In the event where both players draw the same card, you will be given an option to continue with the War Event or to forfeit the war. Forfeiting may be handy if you remember you have very valuable cards near the top of your deck and do not wish to risk them. 
+2. You may exit the program by declining to continue the battle and not re-declaring War. 
 
 # License 
 MIT License

@@ -109,10 +109,10 @@ func DeckInit() *Deck {
 
 func BotDialogue(player *Deck, bot *Deck) {
 	dialogue := map[int]string{
-		1: "I'm waiting... hurry up.",
-		2: "What's wrong? You scared?",
-		3: "Hahaha, you're pathetic. I will emerge victorious!",
-		4: "Doesn't matter that you're winning. I'll come back.",
+		1: "Bot: 'I'm waiting... hurry up.'",
+		2: "Bot: 'What's wrong? You scared?'",
+		3: "Bot: 'Hahaha, you're pathetic. I will emerge victorious!'",
+		4: "Bot: 'Doesn't matter that you're winning. I'll come back.'",
 	}
 	if len(player.PlayingCards) > len(bot.PlayingCards) {
 		fmt.Println(dialogue[4])
@@ -207,6 +207,8 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 		fmt.Println("You lost this War...")
 	} else if result == 0 { // Another War commences. Higher stakes...
 		fmt.Println("Another War has commenced!")
+		playerPile = append(playerPile, c1)
+		botPile = append(botPile, c2)
 		war(player, bot, playerPile, botPile)
 	} else { // If you win, you receive all cards on the field!
 		player.PlayingCards = append(player.PlayingCards, c1)
@@ -224,7 +226,7 @@ func CommenceRound(player *Deck, bot *Deck) {
 	c1, _ := Draw(player)
 	c2, _ := Draw(bot)
 	result := c1.BattleAgainst(c2)
-	if result == -1 {
+	if result == -1 { // You lose!
 		bot.PlayingCards = append(bot.PlayingCards, c1)
 		bot.PlayingCards = append(bot.PlayingCards, c2)
 		fmt.Println("You lost this battle...")
@@ -234,7 +236,7 @@ func CommenceRound(player *Deck, bot *Deck) {
 		playerPile = append(playerPile, c1)
 		botPile = append(botPile, c2)
 		war(player, bot, playerPile, botPile)
-	} else {
+	} else { // You win!
 		player.PlayingCards = append(player.PlayingCards, c2)
 		player.PlayingCards = append(player.PlayingCards, c1)
 		fmt.Println("You won this battle!")

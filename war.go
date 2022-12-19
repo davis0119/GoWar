@@ -39,7 +39,7 @@ func promptPlayer(prompt string) bool {
 // Input: deck pointer, deck pointer
 // Prints out the current status of the game (how many cards each player has).
 func announceStatusQuo(player *deck.Deck, bot *deck.Deck) {
-	fmt.Println("You:", len(player.PlayingCards), "cards |", "Opponent:", len(bot.PlayingCards), "cards |", len(player.PlayingCards)+len(bot.PlayingCards), "are in play.")
+	fmt.Println("You:", len(player.PlayingCards), "cards |", "Opponent:", len(bot.PlayingCards), "cards")
 }
 
 // Input: deck pointer, deck pointer
