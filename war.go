@@ -24,6 +24,7 @@ func promptPlayer(prompt string) bool {
 				return false
 			}
 			if input == "help" {
+				deck.FocusTerminal()
 				fmt.Println("War is a card game which involves 2 players. Each player receives half of a shuffled deck of cards.")
 				fmt.Println("Each round, you will be prompted to commence a battle. In a battle, each player draws a card. The player with a higher card rank (ignoring suit) wins the battle and adds all cards played to their deck.")
 				fmt.Println("A winner is determined when one side no longer has any more cards left to play.")
@@ -54,9 +55,7 @@ func announceWinner(player *deck.Deck, bot *deck.Deck) {
 func main() {
 	gameInSession := promptPlayer("Do you wish to enter War? ")
 	for gameInSession {
-		for i := 0; i < 10; i++ {
-			println() // do this to reduce clutter on the screen
-		}
+		deck.FocusTerminal()
 		// Prepare the deck of cards.
 		d := deck.DeckInit()
 		d = deck.Shuffle(d)

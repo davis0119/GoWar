@@ -24,10 +24,12 @@ type Deck struct {
 	PlayingCards []Card
 }
 
+// Stringify the card.
 func (c *Card) ToStr() string {
 	return c.Value.Name + " of " + c.Suit.Name
 }
 
+// Shuffles the Deck of cards randomly.
 func Shuffle(d *Deck) *Deck {
 	rand.Seed(time.Now().UnixNano()) // not doing this doesn't really "shuffle" the deck every time
 	for i := len(d.PlayingCards) - 1; i > 0; i-- {
@@ -37,24 +39,27 @@ func Shuffle(d *Deck) *Deck {
 	return d
 }
 
+// Draw a card from a deck. The card is removed from the deck.
 func Draw(d *Deck) (Card, *Deck) {
 	card := d.PlayingCards[0]
 	d.PlayingCards = d.PlayingCards[1:]
 	return card, d
 }
 
-func SplitCards(d *Deck) (d1 *Deck, d2 *Deck) {
-	d1 = new(Deck)
-	d2 = new(Deck)
+// Split the deck in half. Used to give cards to both players.
+func SplitCards(d *Deck) (player *Deck, bot *Deck) {
+	player = new(Deck)
+	bot = new(Deck)
 	for len(d.PlayingCards) > 0 {
 		c1, _ := Draw(d)
 		c2, _ := Draw(d)
-		d1.PlayingCards = append(d1.PlayingCards, c1)
-		d2.PlayingCards = append(d2.PlayingCards, c2)
+		player.PlayingCards = append(player.PlayingCards, c1)
+		bot.PlayingCards = append(bot.PlayingCards, c2)
 	}
-	return d1, d2
+	return player, bot
 }
 
+// Strigify the deck.
 func (d *Deck) ToStr() string {
 	s := ""
 	for _, c := range d.PlayingCards {
@@ -63,6 +68,14 @@ func (d *Deck) ToStr() string {
 	return s
 }
 
+// Used as a utility function to reduce clutter in the terminal.
+func FocusTerminal() {
+	for i := 0; i < 10; i++ {
+		println()
+	}
+}
+
+// Initialize the deck with a bunch of cards.
 func DeckInit() *Deck {
 	d := new(Deck)
 	suits := []Suit{
@@ -94,6 +107,7 @@ func DeckInit() *Deck {
 	return d
 }
 
+// Similar to a compareTo method. Sees which card would be victorious in battle.
 func (c1 *Card) BattleAgainst(c2 Card) int {
 	fmt.Println("You: " + c1.ToStr() + " | Opponent: " + c2.ToStr())
 	if c1.Value.Val < c2.Value.Val {
@@ -105,6 +119,7 @@ func (c1 *Card) BattleAgainst(c2 Card) int {
 	}
 }
 
+// Awaits the player prompt to advance in the war.
 func promptPlayer(prompt string) bool {
 	var input string
 	for {
@@ -118,6 +133,7 @@ func promptPlayer(prompt string) bool {
 				return false
 			}
 			if input == "help" {
+				FocusTerminal()
 				fmt.Println("War Event: Occurs due to both players drawing the same rank card.")
 				fmt.Println("In this event, both players place down 3 cards and draw one additional card to battle.")
 				fmt.Println("The winner takes all cards on the field.")
@@ -135,74 +151,67 @@ func promptPlayer(prompt string) bool {
 // The battle card is the next one drawn after that.
 // This event recursively continues until there is a winner.
 // The winner at the end of the battle receives all cards at stake.
-func war(d1 *Deck, d2 *Deck, d1Pile []Card, d2Pile []Card) {
+func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 	// 3 cards are at stake for each war.
 	for i := 0; i < 3; i++ {
-		if GameOver(d1, d2) {
+		if GameOver(player, bot) {
 			return
 		}
-		c1, _ := Draw(d1)
-		c2, _ := Draw(d2)
-		d1Pile = append(d1Pile, c1)
-		d2Pile = append(d2Pile, c2)
+		c1, _ := Draw(player)
+		c2, _ := Draw(bot)
+		playerPile = append(playerPile, c1)
+		botPile = append(botPile, c2)
 	}
 	// The battle determining card.
 	readyToAdvance := false
 	for !readyToAdvance {
-		readyToAdvance = promptPlayer("A War is in progress. Are you view the results? (y/n) ")
+		readyToAdvance = promptPlayer("A War is in progress. Are you ready to view the results? (y/n) ")
 	}
-	print("War in progress")
-	for i := 0; i < 3; i++ {
-		time.Sleep(time.Second)
-		print(".")
-		if i == 2 {
-			println()
-		}
-	}
-	if GameOver(d1, d2) {
+	if GameOver(player, bot) {
 		return
 	}
-	c1, _ := Draw(d1)
-	c2, _ := Draw(d2)
+	warWaiting()
+	c1, _ := Draw(player)
+	c2, _ := Draw(bot)
 	result := c1.BattleAgainst(c2)
 	if result == -1 { // If you lose, you lose all cards to the other player.
-		d2.PlayingCards = append(d2.PlayingCards, c1)
-		d2.PlayingCards = append(d2.PlayingCards, c2)
-		d2.PlayingCards = append(d2.PlayingCards, d1Pile...)
-		d2.PlayingCards = append(d2.PlayingCards, d2Pile...)
+		bot.PlayingCards = append(bot.PlayingCards, c1)
+		bot.PlayingCards = append(bot.PlayingCards, c2)
+		bot.PlayingCards = append(bot.PlayingCards, playerPile...)
+		bot.PlayingCards = append(bot.PlayingCards, botPile...)
 		fmt.Println("You lost this War...")
 	} else if result == 0 { // Another War commences. Higher stakes...
 		fmt.Println("Another War has commenced!")
-		war(d1, d2, d1Pile, d2Pile)
+		war(player, bot, playerPile, botPile)
 	} else { // If you win, you receive all cards on the field!
-		d1.PlayingCards = append(d1.PlayingCards, c1)
-		d1.PlayingCards = append(d1.PlayingCards, c2)
-		d1.PlayingCards = append(d1.PlayingCards, d1Pile...)
-		d1.PlayingCards = append(d1.PlayingCards, d2Pile...)
+		player.PlayingCards = append(player.PlayingCards, c1)
+		player.PlayingCards = append(player.PlayingCards, c2)
+		player.PlayingCards = append(player.PlayingCards, playerPile...)
+		player.PlayingCards = append(player.PlayingCards, botPile...)
 		fmt.Println("You won this War!")
 	}
 }
 
-func CommenceRound(d1 *Deck, d2 *Deck) {
-	for i := 0; i < 10; i++ {
-		println() // do this to reduce clutter on the screen
-	}
-	c1, _ := Draw(d1)
-	c2, _ := Draw(d2)
+// Represents a battle / round of War. Players both draw a card and see which player wins the battle.
+// The winner receives the cards on the field. The player with no cards remaining loses.
+func CommenceRound(player *Deck, bot *Deck) {
+	FocusTerminal()
+	c1, _ := Draw(player)
+	c2, _ := Draw(bot)
 	result := c1.BattleAgainst(c2)
 	if result == -1 {
-		d2.PlayingCards = append(d2.PlayingCards, c1)
-		d2.PlayingCards = append(d2.PlayingCards, c2)
+		bot.PlayingCards = append(bot.PlayingCards, c1)
+		bot.PlayingCards = append(bot.PlayingCards, c2)
 		fmt.Println("You lost this battle...")
 	} else if result == 0 { // war commences
-		d1Pile := make([]Card, 0)
-		d2Pile := make([]Card, 0)
-		d1Pile = append(d1Pile, c1)
-		d2Pile = append(d2Pile, c2)
-		war(d1, d2, d1Pile, d2Pile)
+		playerPile := make([]Card, 0)
+		botPile := make([]Card, 0)
+		playerPile = append(playerPile, c1)
+		botPile = append(botPile, c2)
+		war(player, bot, playerPile, botPile)
 	} else {
-		d1.PlayingCards = append(d1.PlayingCards, c2)
-		d1.PlayingCards = append(d1.PlayingCards, c1)
+		player.PlayingCards = append(player.PlayingCards, c2)
+		player.PlayingCards = append(player.PlayingCards, c1)
 		fmt.Println("You won this battle!")
 	}
 }
@@ -211,4 +220,16 @@ func CommenceRound(d1 *Deck, d2 *Deck) {
 // Checks if either of the decks have 0 cards and returns true if either one does.
 func GameOver(player *Deck, bot *Deck) bool {
 	return len(player.PlayingCards) == 0 || len(bot.PlayingCards) == 0
+}
+
+// Used as a utility function to add effect to the game. As troops are battling, the players await in suspense.
+func warWaiting() {
+	print("War in progress")
+	for i := 0; i < 3; i++ {
+		time.Sleep(time.Second)
+		print(".")
+		if i == 2 {
+			println()
+		}
+	}
 }
