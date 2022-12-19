@@ -120,17 +120,20 @@ func (c1 *Card) BattleAgainst(c2 Card) int {
 }
 
 // Awaits the player prompt to advance in the war.
-func promptPlayer(prompt string) bool {
+func promptPlayer(prompt string) int {
 	var input string
 	for {
 		fmt.Print(prompt)
 		fmt.Scanln(&input)
 		if len(input) > 0 {
 			if input[0] == 'y' {
-				return true
+				return 1
 			}
 			if input[0] == 'n' {
-				return false
+				return 0
+			}
+			if input[0] == 'f' {
+				return -1
 			}
 			if input == "help" {
 				FocusTerminal()
@@ -141,7 +144,7 @@ func promptPlayer(prompt string) bool {
 			}
 		}
 		if input != "help" {
-			fmt.Println("Answer via 'y' or 'n'")
+			fmt.Println("Answer via 'y' or 'n'. If you would like more info, type 'help'")
 		}
 	}
 }
@@ -163,14 +166,21 @@ func war(player *Deck, bot *Deck, playerPile []Card, botPile []Card) {
 		botPile = append(botPile, c2)
 	}
 	// The battle determining card.
-	readyToAdvance := false
-	for !readyToAdvance {
-		readyToAdvance = promptPlayer("A War is in progress. Are you ready to view the results? (y/n) ")
+	readyToAdvance := 0
+	for readyToAdvance == 0 {
+		readyToAdvance = promptPlayer("A War is in progress. Are you ready to view the results? (y/n | f to forfeit this War Event) ")
 	}
 	if GameOver(player, bot) {
 		return
 	}
-	warWaiting()
+	if readyToAdvance == -1 {
+		warWaiting("You have forfeited this War")
+		bot.PlayingCards = append(bot.PlayingCards, playerPile...)
+		bot.PlayingCards = append(bot.PlayingCards, botPile...)
+		fmt.Println("Your troops have now joined your opponent's side.")
+		return
+	}
+	warWaiting("War in progress")
 	c1, _ := Draw(player)
 	c2, _ := Draw(bot)
 	result := c1.BattleAgainst(c2)
@@ -223,8 +233,8 @@ func GameOver(player *Deck, bot *Deck) bool {
 }
 
 // Used as a utility function to add effect to the game. As troops are battling, the players await in suspense.
-func warWaiting() {
-	print("War in progress")
+func warWaiting(message string) {
+	print(message)
 	for i := 0; i < 3; i++ {
 		time.Sleep(time.Second)
 		print(".")

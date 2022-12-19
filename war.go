@@ -26,12 +26,12 @@ func promptPlayer(prompt string) bool {
 			if input == "help" {
 				deck.FocusTerminal()
 				fmt.Println("War is a card game which involves 2 players. Each player receives half of a shuffled deck of cards.")
-				fmt.Println("Each round, you will be prompted to commence a battle. In a battle, each player draws a card. The player with a higher card rank (ignoring suit) wins the battle and adds all cards played to their deck.")
+				fmt.Println("Each round, you will be prompted to commence a battle. In a battle, each player draws a card. The player with a higher card rank (ignoring suit) wins the battle and adds all cards played to their deck. If the ranks are the same, a War Event occurs. You may reprompt 'help' then for more info about that case.")
 				fmt.Println("A winner is determined when one side no longer has any more cards left to play.")
 			}
 		}
 		if input != "help" {
-			fmt.Println("Answer via 'y' or 'n'")
+			fmt.Println("Answer via 'y' or 'n'. If you would like more info, type 'help'")
 		}
 	}
 }
