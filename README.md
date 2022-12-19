@@ -15,7 +15,7 @@ Players are given 3 opportunities to deploy more troops -- in the event of a War
 1. go run war.go 
    - Prompt 'y' to enter the game. 'help' will always be a keyword to provide more information. 
    - Each round, you will be asked to 'Wage battle'. This represents a round in War (both players draw a card).
-   - In the event where both players draw the same card, you will be given an option to continue with the War Event or to forfeit the war. Forfeiting may be handy if you remember you have very valuable cards near the top of your deck and do not wish to risk them. 
+   - In the event where both players draw the same card, you will be given an option to continue with the War Event or to forfeit the war. Forfeiting may be handy if you remember you have very valuable cards near the top of your deck and do not wish to risk them. There will also be an option to deploy more troops (which would force your opponent to deploy more troops) to up the stakes. This is a limited action per game. 
 2. You may exit the program by declining ('n') to continue the battle and not re-declaring War. 
 
 # License 
